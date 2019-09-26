@@ -1,0 +1,40 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Component CustomInput Can render CustomInput default with type component text 1`] = `
+<div>
+  <input
+    className="css-qxdahf"
+    defaultValue="Ryan ryenold"
+    onBlur={[MockFunction]}
+    onKeyUp={[MockFunction]}
+    placeholder=""
+    type="text"
+  />
+</div>
+`;
+
+exports[`Component CustomInput Can render CustomInput even without placeholder 1`] = `
+<div>
+  <input
+    className="css-qxdahf"
+    defaultValue="Ryan ryenold"
+    onBlur={[MockFunction]}
+    onKeyUp={[MockFunction]}
+    placeholder=""
+    type="text"
+  />
+</div>
+`;
+
+exports[`Component CustomInput Can render CustomInput with type component textarea 1`] = `
+<div>
+  <textarea
+    className="css-1iwbmm6"
+    defaultValue="Ryan ryenold"
+    onBlur={[MockFunction]}
+    onKeyUp={[MockFunction]}
+    placeholder="Search Giphy here"
+    rows="4"
+  />
+</div>
+`;

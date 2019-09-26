@@ -1,0 +1,41 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Component Loading Can render Loading smoothly with dark mode 1`] = `
+<div
+  className="css-1pnfice"
+>
+  <svg
+    height="12px"
+    width="16px"
+  >
+    <polyline
+      id="back"
+      points="1 6 4 6 6 11 10 1 12 6 15 6"
+    />
+    <polyline
+      id="front"
+      points="1 6 4 6 6 11 10 1 12 6 15 6"
+    />
+  </svg>
+</div>
+`;
+
+exports[`Component Loading Can render Loading smoothly with light mode 1`] = `
+<div
+  className="css-1xkqot3"
+>
+  <svg
+    height="12px"
+    width="16px"
+  >
+    <polyline
+      id="back"
+      points="1 6 4 6 6 11 10 1 12 6 15 6"
+    />
+    <polyline
+      id="front"
+      points="1 6 4 6 6 11 10 1 12 6 15 6"
+    />
+  </svg>
+</div>
+`;

@@ -1,0 +1,10 @@
+en:
+  home:
+    trending: "Trending"
+    random: "Random"
+    search-giphy: "Search Giphy here"
+    filter-random: "Filter random doesn't work because Giphy api give only an object not array of object"
+    no-result: "No result found"
+    dark-mode: "Dark Mode"
+  copy:
+    made-width: "Made width love by <a href='https://www.linkedin.com/in/syafilm'>Syafil</a>"

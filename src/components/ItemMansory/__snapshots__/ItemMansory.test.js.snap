@@ -1,0 +1,32 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Component ItemMansory Can render ItemMansory smoothly 1`] = `
+<div
+  className="css-1ynbocu"
+  onMouseEnter={[Function]}
+  onMouseLeave={[Function]}
+>
+  <div
+    className="css-cssveg"
+  >
+    <span
+      className="css-n11tlf"
+    />
+    <span
+      className="css-1te34s2"
+    />
+    <div
+      className="css-16r1lim"
+    >
+      <h5>
+        just tell me what you want and ill be that for you ryan gosling GIF
+      </h5>
+    </div>
+    <img
+      alt=""
+      className="css-1utsrk3"
+      src="https://media3.giphy.com/media/pjnfNhaFmkhxu/480w_s.jpg?cid=193ba05e5d259554634770392ebcb350&rid=480w_s.jpg"
+    />
+  </div>
+</div>
+`;

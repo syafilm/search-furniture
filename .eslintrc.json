@@ -1,0 +1,45 @@
+{
+  "env": {
+    "browser": true,
+    "node": true,
+    "es6": true
+  },
+  "parser": "babel-eslint",
+  "parserOptions": {
+    "sourceType": "module"
+  },
+  "plugins": [
+    "react"
+  ],
+  "extends": [
+    "eslint:recommended", 
+    "plugin:react/recommended",
+    "airbnb"
+  ],
+  "rules": {
+    "semi": [2, "never"],
+    "no-console": 1,
+    "no-debugger": 1,
+    "indent": [2, 2],
+    "jsx-quotes": ["error", "prefer-single"],
+    "no-multi-spaces": ["error", {
+      "exceptions": {
+        "BinaryExpression": false,
+        "ImportDeclaration": false,
+        "VariableDeclarator": false
+      }
+    }],
+    "react/no-multi-comp": "error",
+    "object-curly-spacing": [2, "never"],
+    "react/prefer-es6-class": [2, "always"],
+    "comma-dangle": ["error", "never"],
+    "no-param-reassign": ["error", {
+      "props": false
+    }],
+    "jsx-a11y/alt-text": ["error", "never"],
+    "react/prop-types": "off",
+    "import/extensions": "off",
+    "import/no-unresolved": "off",
+    "react/destructuring-assignment": [0, "never"]
+  }
+}

@@ -1,0 +1,10 @@
+id:
+  home:
+    trending: "Trending"
+    random: "Acak"
+    search-giphy: "Cari Giphy Disini"
+    filter-random: "Filter acak tidak berfungsi karena Giphy api hanya memberikan objek bukan array objek"
+    no-result: "Tidak ditemukan hasil"
+    dark-mode: "Mode Gelap"
+  copy:
+    made-width: "Dibuat dengan cinta oleh <a href='https://www.linkedin.com/in/syafilm'>Syafil</a>"

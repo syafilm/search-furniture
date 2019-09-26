@@ -1,0 +1,9 @@
+{
+  "presets": ["env", "es2015", "stage-0", "react"],
+  "plugins": [
+    "transform-decorators-legacy",
+    ["babel-plugin-dotenv", {
+      "replacedModuleName": "babel-dotenv"
+    }]
+  ]
+}
