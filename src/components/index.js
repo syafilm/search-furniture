@@ -1,6 +1,4 @@
 export { default as CustomInput } from './CustomInput/CustomInput'
-export { default as CustomRadio } from './CustomRadio/CustomRadio'
 export { default as CustomCheckbox } from './CustomCheckbox/CustomCheckbox'
 export { default as CustomSelect } from './CustomSelect/CustomSelect'
-export { default as ItemMansory } from './ItemMansory/ItemMansory'
 export { default as Loading } from './Loading/Loading'
