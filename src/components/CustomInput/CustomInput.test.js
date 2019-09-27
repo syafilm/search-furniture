@@ -7,7 +7,7 @@ import CustomInput from './CustomInput'
 describe('Component CustomInput', () => {
   const mockEvent = jest.fn()
   const valueSearch = 'Ryan ryenold'
-  const placeholder = 'Search Giphy here'
+  const placeholder = 'Search Furniture here'
   it('Can render CustomInput with type component textarea', () => {
     const component = shallow(
       <CustomInput

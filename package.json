@@ -1,7 +1,7 @@
 {
-  "name": "search-giphy",
+  "name": "search-furniture",
   "version": "1.0.0",
-  "description": "Search giphy based on third party api",
+  "description": "Search furniture based on third party api",
   "main": "index.js",
   "author": "syafilm27@gmail.com",
   "license": "MIT",

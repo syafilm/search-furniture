@@ -36,7 +36,7 @@ exports[`Component CustomInput Can render CustomInput with type component textar
     defaultValue="Ryan ryenold"
     onBlur={[MockFunction]}
     onKeyUp={[MockFunction]}
-    placeholder="Search Giphy here"
+    placeholder="Search Furniture here"
     rows="4"
   />
 </div>
