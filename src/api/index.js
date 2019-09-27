@@ -1,2 +1,2 @@
 /* eslint-disable */
-export { default as ApiGiphy } from './api.giphy'
+export { default as ApiFurniture } from './api.furniture'

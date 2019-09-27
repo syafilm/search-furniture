@@ -1,9 +1,13 @@
+/*eslint-disable */
 import React, { Component, Fragment } from 'react'
+import OutsideClickHandler from 'react-outside-click-handler';
 import {
   CustomInput,
   ItemMansory,
   Loading,
   CustomRadio,
+  CustomCheckbox,
+  CustomSelect,
 } from 'components'
 
 import {
@@ -14,373 +18,303 @@ import {
 } from 'utils'
 
 import {
-  ApiGiphy,
+  ApiFurniture,
 } from 'api'
-
-import giphyLogo from 'images/giphy-logo.png'
 
 class Home extends Component {
   state = {
-    valueSearch: '',
-    resultSearch: [],
+    searchKeyword: '',
+    products: [],
+    furnitureStyles: [],
+    furnitureStylesSelected: [],
+    furnitureStylesOpen: false,
+    deliveryOptionOpen: false,
+    deliveryOption: [],
+    deliveryOptionSelected: [],
     loading: false,
-    darkMode: false,
-    filterSet: '',
-    filterSetdoesntwork: false,
-    lang: '',
+    resultData: [],
   }
 
-  componentDidMount = () => {
-    window.addEventListener('scroll', this.handleScroll)
-    const value = localStorage.getItem('locale')
+  componentDidMount(){
     this.setState({
-      lang: value
+      loading: true,
+    })
+
+    ApiFurniture.indexFurniture().then(({data}) => {
+      const products = data.products
+      const furnitureStyles = data.furniture_styles
+      const deliveryOption = products.map(item => {return `${item.delivery_time} Days` })
+      const set = new Set()      
+      const filteredArr = deliveryOption.filter((item) => {
+        const duplicateId = set.has(item)
+        set.add(item)
+        return !duplicateId
+      })
+      this.setState({
+        products,
+        furnitureStyles,
+        deliveryOption:filteredArr,
+        resultData: products,
+        loading: false,
+      })
     })
   }
 
-  handleScroll = async () => {
-    const {
-      valueSearch,
-      resultSearch,
-      filterSet,
-    } = this.state
-
-    const value = resultSearch.length
-
-    if (valueSearch || filterSet) {
-      if (window.innerHeight + document.documentElement.scrollTop
-          === document.documentElement.offsetHeight) {
-        if (filterSet === 'trending' || filterSet === 'random') {
-          this.handleScrollFilter(resultSearch, value)
-        } else {
-          await ApiGiphy.searchGiphy(valueSearch, value).then((response) => {
-            const set = new Set()
-            const newArray = response.data.data.map(item => Object.assign(item, {
-              background_color: this.getRandomColor(),
-            }))
-            const data = resultSearch.concat(newArray)
-            const filteredArr = data.filter((item) => {
-              const duplicateId = set.has(item.id)
-              set.add(item.id)
-              return !duplicateId
-            })
-            this.setState({
-              resultSearch: filteredArr,
-            })
-          })
+  handleSearch = (state, type) => {
+    let allEmpty = (state['furnitureStylesSelected'].length === 0) && 
+    (state['deliveryOptionSelected'].length === 0) && 
+    (state['searchKeyword'].length === 0)
+    if(state[type].length > 0) {
+      const resultData = state.products.filter(
+        item => {
+          let data
+          switch(type) {
+            case 'deliveryOptionSelected':
+              data = state[type].includes(`${item.delivery_time} Days`)
+              break
+            case 'furnitureStylesSelected':
+              data = item.furniture_style.filter(item => state[type].includes(item)).length
+              break
+            default:
+              data = item.name.toLowerCase().includes(state[type]) || 
+                     item.description.toLowerCase().includes(state[type])
+          }
+          return data
         }
-      }
-    }
-  }
-
-  handleScrollFilter = async (resultSearch, value) => {
-    const {
-      filterSet,
-    } = this.state
-    if (filterSet === 'trending') {
-      await ApiGiphy.trendingGiphy(value).then((response) => {
-        const set = new Set()
-        const newArray = response.data.data.map(item => Object.assign(item, {
-          background_color: this.getRandomColor(),
-        }))
-        const data = resultSearch.concat(newArray)
-        const filteredArr = data.filter((item) => {
-          const duplicateId = set.has(item.id)
-          set.add(item.id)
-          return !duplicateId
-        })
-        this.setState({
-          resultSearch: filteredArr,
-        })
-      })
-    } else {
+      )
       this.setState({
-        resultSearch: [],
-        filterSetdoesntwork: true,
+        resultData
+      })
+    } else if (state['searchKeyword'].length === 0 && 
+               state['deliveryOptionSelected'].length === 0 && 
+               state['searchKeyword'].length > 0){
+      const resultData = state.products.filter(
+        item => item.name.toLowerCase().includes(state[type]) || 
+                     item.description.toLowerCase().includes(state[type])
+      )
+      this.setState({
+        resultData
+      })
+    }else if (allEmpty) {
+      const resultData = state.products
+      this.setState({
+        resultData,
       })
     }
+
+    
   }
 
-  handleSearch = (event) => {
-    const {
-      value,
-    } = event.target
+  handleStateInput = (type) => (e) => {
+    let value
+
+    if(type === 'searchKeyword'){
+      value = e.target.value.toLowerCase()
+    } else {
+      value = e.target.value
+    }
+
     this.setState({
-      valueSearch: value,
+      [type]: value
     }, () => {
-      this.searchGiphy(value)
+      this.handleSearch(this.state, type)
     })
   }
 
-  searchGiphy = async (data) => {
-    const {
-      valueSearch,
-    } = this.state
-
-    const value = data.type === 'click' ? valueSearch : data
-    if (valueSearch) {
-      this.setState({ loading: true })
-      await ApiGiphy.searchGiphy(value, 1).then((response) => {
-        const newArray = response.data.data.map(item => Object.assign(item, {
-          background_color: this.getRandomColor(),
-        }))
-        this.setState({
-          resultSearch: newArray,
-          loading: false,
-          filterSet: '',
-          filterSetdoesntwork: false,
-        })
-      })
-    }
-  }
-
-  getRandomColor = () => {
-    const letters = '0123456789ABCDEF'
-    let color = '#'
-    for (let i = 0; i < 6; i += 1) {
-      color += letters[Math.floor(Math.random() * 16)]
-    }
-    return color
-  }
-
-  renderResultSearch = (result) => {
-    let dataResult
-
-    const {
-      darkMode,
-      valueSearch,
-      filterSetdoesntwork,
-    } = this.state
-
-
-    const color = darkMode ? '#000' : '#fff'
-    if (result.length > 0) {
-      dataResult = (
-        <div className={Styles.mansory}>
-          {result.map((item) => {
-            const data = {
-              color: item.background_color,
-              height: item.images.preview.height,
-            }
-
-            return (
-              <ItemMansory
-                key={item.id}
-                placeholder={data}
-                item={item}
-                color={color}
-              />
-            )
-          })}
-        </div>
-      )
-    }
-
-    if (valueSearch && result.length === 0 && !filterSetdoesntwork) {
-      dataResult = (
-        <div className={Helpers.mergeCss(
-          Styles.dBlock,
-          Styles.w12,
-          Styles.marginTop5,
-          Styles.paddingTop5,
-          Styles.textCenter,
-        )}
-        >
-          <div className={darkMode ? Styles.textWhite : undefined}>
-            {I18n.t('home.no-result')}
-          </div>
-        </div>
-      )
-    }
-
-    return dataResult
-  }
-
-  handleClickDarkMode = value => () => {
-    if (!value) {
-      document.body.style.backgroundColor = '#000'
+  handleStateInputCheckBox = (type, item) => () => {
+    let selected
+    const isExist = this.state[type].filter(data => data === item).length > 0
+    if (isExist) {
+      selected = this.state[type].filter(data => data !== item)
     } else {
-      document.body.style.backgroundColor = '#fff'
+      selected = this.state[type].concat(item)
     }
-
     this.setState({
-      darkMode: !value,
+      [type]: selected
+    }, () => {
+      this.handleSearch(this.state, type)
+    })
+  }
+  
+  handleFocus = (type, value) => (event) => {
+    this.setState({
+      [type]: value
     })
   }
 
-  handleFilter = value => async () => {
-    if (value === 'trending') {
-      this.setState({ loading: true })
-      await ApiGiphy.trendingGiphy(1).then((response) => {
-        const newArray = response.data.data.map(item => Object.assign(item, {
-          background_color: this.getRandomColor(),
-        }))
-        this.setState({
-          resultSearch: newArray,
-          loading: false,
-          filterSetdoesntwork: false,
-        })
-      })
-    } else {
-      this.setState({
-        resultSearch: [],
-        filterSetdoesntwork: true,
-      })
-    }
-
-    this.setState({
-      filterSet: value,
-    })
-  }
-
-  renderDarkmodeButton = (value) => {
-    const cssClass = value ? Styles.textWhite : ''
+  renderFilterCheckBox = (state, option, type, typeSelected, placeholder) => {
     const {
-      lang
-    } = this.state
-    return (
-      <div className={Styles.wrapper}>
-        <div className={Helpers.mergeCss(Styles.marginRight2, Styles.buttonWrapper)}>
-          <input
-            onClick={this.handleClickDarkMode(value)}
-            value={value}
-            className={Styles.checkBoxCustom}
-            type="checkbox"
-          />
-          <div className={Styles.knobs(lang)}>
-            <span />
-          </div>
-          <div className={Styles.layer} />
-        </div>
-        <span className={cssClass}>
-          {I18n.t('home.dark-mode')}
-        </span>
-      </div>
-    )
-  }
+      handleStateInput,
+      handleStateInputCheckBox,
+      handleFocus,
+    } = this
 
-  handleLang = value => () => {
-    switch (value) {
-      case 'id':
-        localStorage.setItem('locale', 'id')
-        document.documentElement.lang = 'id'
-        break
-      default:
-        localStorage.setItem('locale', 'en')
-        document.documentElement.lang = 'en'
-    }
-    window.location.reload()
-    this.props.history.replace({pathname: Routes.ACTIVE.ROOT})
-  }
-
-  renderLangCode = () => {
     return(
-      <div className={Helpers.mergeCss(Styles.positionFixed, Styles.customPosition)}>
-        <div className={Styles.dFlex}>
-          <span onClick={this.handleLang('id')}>Ind</span>
-          <span className={Helpers.mergeCss(Styles.marginLeft2, Styles.marginRight2)}>|</span>
-          <span onClick={this.handleLang('en')}>Eng</span>
+      <OutsideClickHandler
+        onOutsideClick={handleFocus(type, false)}>
+        <div className={Styles.positionRelative}>
+          <div className={Styles.positionRelative}>
+            <CustomInput
+              type='text'
+              placeholder={placeholder}
+              className={Helpers.mergeCss(Styles.backgroundColor('#fff'), Styles.borderWhite)}
+              onFocus={handleFocus(type, true)}                      
+            />
+            {
+              state[typeSelected].length > 0 && (
+                <div onClick={handleFocus(type, true)}  className={Styles.optionSelectedWrapper}>
+                  {state[typeSelected].map((item,key) => (
+                    <span className={Styles.optionSelected} key={key}>{item}</span>
+                  ))
+                  }
+                </div>
+              )
+            }
+          </div>
+          {
+            state[type] &&
+              ( 
+                <div className={Styles.optionListWrapper}>
+                  <ul className={Helpers.mergeCss(Styles.ulUnstyled, Styles.optionList)}>
+                    {state[option].map((item, key) =>                   
+                      <li className={Helpers.mergeCss(Styles.dFlex, Styles.optionItem)} key={key}>
+                        <CustomCheckbox
+                          type='checkbox'
+                          text={item}
+                          value={state[typeSelected].includes(item)}
+                          label={item}
+                          onChange={handleStateInputCheckBox(typeSelected, item)}
+                          />
+                      </li>
+                    )}
+                  </ul>
+                </div>
+              )
+          }
         </div>
-      </div>
+      </OutsideClickHandler>
     )
   }
 
   render() {
     const {
-      valueSearch,
-      resultSearch,
-      darkMode,
-      loading,
-      filterSet,
-      filterSetdoesntwork,
-    } = this.state
+      handleFocus,
+      handleStateInput,
+      renderFilterSelect,
+      renderFilterCheckBox,
+      state: {
+        searchKeyword,
+        products,
+        furnitureStyles,
+        furnitureStylesOpen,
+        furnitureStylesSelected,
+        deliveryOption,
+        loading,
+        resultData,
+        deliveryOptionOpen,
+      }
+    } = this
 
-    const color = darkMode ? '#000' : '#fff'
-    const colorReverse = darkMode ? '#fff' : '#000'
+    if (loading) {
+      return(
+        <Loading/>
+      )
+    }
 
     return (
-      <Fragment>
-        <div className={Styles.container}>
-          <div className={Styles.container}>
-            <div className={Helpers.mergeCss(Styles.row, Styles.justifyContentCenter)}>
-              <div className={Helpers.mergeCss(Styles.col, Styles.w8, Styles.textCenter)}>
-                <img alt="" className={Styles.marginTop4} src={giphyLogo} />
-                <div className={Styles.dFlexCustom}>
-                  <div className={Styles.positionRelative}>
-                    <CustomInput
-                      type="text"
-                      value={valueSearch}
-                      onBlur={this.handleSearch}
-                      placeholder={I18n.t('home.search-giphy')}
-
-                    />
-                    <button
-                      className={Helpers.mergeCss(
-                        Styles.btnDark,
-                        Styles.positionAbsolute,
-                        Styles.customBtn,
-                      )}
-                      onClick={this.searchGiphy}
-                      type="submit"
-                    >
-                      Search
-                    </button>
+      <div className={Styles.container}>
+        <div className={Helpers.mergeCss(Styles.row, Styles.justifyContentCenter)}>
+          <div className={Helpers.mergeCss(Styles.col, Styles.w8)}>
+            <div className={Helpers.mergeCss(Styles.card, Styles.backgroundColor('transparent'), Styles.border0)}>
+              <div className={
+                Helpers.mergeCss(Styles.row, Styles.headerFilter)}>
+                <div className={Styles.w12}>
+                  <div className={Styles.row}>
+                    <div className={Styles.w6}>
+                      <CustomInput
+                        type='text'
+                        className={Helpers.mergeCss(
+                          Styles.backgroundColor('transparent'), 
+                          Styles.borderBottomWhite,
+                          Styles.color('#fff')
+                        )}
+                        value={searchKeyword}
+                        placeholder='Search Furniture'
+                        onBlur={handleStateInput('searchKeyword')}
+                        onKeyUp={handleStateInput('searchKeyword')}
+                      />
+                    </div>
                   </div>
-                  <div className={Helpers.mergeCss(Styles.dFlexCustom2,
-                    Styles.textLeft,
-                    Styles.marginLeft3)}
-                  >
-                    <span className={darkMode ? Styles.textWhite : undefined}>
-                      Filter by
-                    </span>
-                    <CustomRadio
-                      text="trending"
-                      onChange={this.handleFilter('trending')}
-                      checked={filterSet === 'trending'}
-                      value="trending"
-                      color={colorReverse}
-                      label={I18n.t('home.trending')}
-                    />
-                    <CustomRadio
-                      text="random"
-                      onChange={this.handleFilter('random')}
-                      checked={filterSet === 'random'}
-                      value="random"
-                      color={colorReverse}
-                      label={I18n.t('home.random')}
-                    />
+                  <div className={Helpers.mergeCss(Styles.row, Styles.marginTop4)}>
+                    <div className={Helpers.mergeCss(Styles.w6, Styles.paddingRight2)}>
+                      {
+                        renderFilterCheckBox(
+                          this.state,
+                          'furnitureStyles',
+                          'furnitureStylesOpen', 
+                          'furnitureStylesSelected',
+                          'Furniture Style',
+                        )
+                      }
+                    </div>
+                    <div className={Helpers.mergeCss(Styles.w6, Styles.paddingLeft2)}>
+                    {
+                        renderFilterCheckBox(
+                          this.state,
+                          'deliveryOption', 
+                          'deliveryOptionOpen',
+                          'deliveryOptionSelected',
+                          'Delivery Time'
+                        )
+                      }
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className={Helpers.mergeCss(Styles.row, Styles.marginTop4)}>
+                <div className={Helpers.mergeCss(Styles.w12, Styles.paddingLeft3, Styles.paddingRight3)}>
+                  <div className={Styles.row}>
+                  {resultData.length > 0 && (resultData.map((item, key) => (
+                    <div key={key} className={Helpers.mergeCss(Styles.col, Styles.w6)}>
+                      <div className={Helpers.mergeCss(Styles.card, Styles.cardList)}>
+                        <div className={Styles.cardBody}>
+                          <div className={Styles.row}>
+                            <div className={Helpers.mergeCss(Styles.col, Styles.w7)}>
+                              <h3 className={Styles.textDark}>
+                                {item.name}
+                              </h3>
+                            </div>
+                            <div className={Helpers.mergeCss(Styles.col, Styles.textRight, Styles.w5)}>
+                              <span>
+                              IDR {item.price}
+                              </span>
+                            </div>
+                          </div>
+                          <p className={Helpers.mergeCss(Styles.textRead, Styles.textElepsis3)}>
+                            {item.description}
+                          </p>
+                          <ul className={Styles.listInline}>
+                            {item.furniture_style.map((data, key) =>
+                              <li key={key}>{data}</li>
+                              )}
+                          </ul>
+                          <div className={Styles.row}>
+                            <div className={Helpers.mergeCss(Styles.col, Styles.w12, Styles.textRight)}>
+                              <b>{item.delivery_time} Days</b>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                      )))
+                    }
                   </div>
                 </div>
               </div>
             </div>
-            <div className={Helpers.mergeCss(Styles.row, Styles.marginTop4)}>
-              {!loading && this.renderResultSearch(resultSearch)}
-            </div>
-            {!loading && filterSetdoesntwork && (
-              <div className={Helpers.mergeCss(
-                Styles.dBlock,
-                Styles.w12,
-                Styles.marginTop5,
-                Styles.paddingTop5,
-                Styles.textCenter,
-              )}
-              >
-                <div className={darkMode ? Styles.textWhite : undefined}
-                >
-                  {I18n.t('home.filter-random')}
-                </div>
-              </div>
-            )}
-            {loading && (
-              <div className={Helpers.mergeCss(Styles.row, Styles.justifyContentCenter)}>
-                <Loading color={color} />
-              </div>
-            )}
           </div>
         </div>
-        {this.renderDarkmodeButton(darkMode)}
-        {this.renderLangCode()}
-      </Fragment>
+      </div>
     )
   }
 }

@@ -1,3 +1,4 @@
+/*eslint-disable */
 import { css } from 'emotion'
 
 const formControl = css`
@@ -12,12 +13,34 @@ const formControl = css`
   background-color: #f3f3f3;
   background-clip: padding-box;
   border: 1px solid transparent;
-  border-radius: 30px;
+  border-radius: 0px;
   transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
   &:focus{
     outline: 0;
-    border: 1px solid transparent !important;
+    border-bottom: 1px solid #fff !important;
     box-shadow: 0 0px 0px 0 rgba(0,0,0,0.5);
+  }
+  &.select:not([multiple]) {
+    
+  }
+`
+
+const customSelect = css`
+ &:not([multiple]) {
+    -moz-appearance: none;
+    -webkit-appearance: none;
+    appearance: none;
+    position: relative;
+    background-color: #fff;
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' version='1.1' height='10px' width='15px'%3E%3Ctext x='0' y='10' fill='gray'%3E%E2%96%BE%3C/text%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right center;
+    background-clip: border-box;
+    -moz-background-clip: border-box;
+    -webkit-background-clip: border-box;
+  }
+  &::-ms-expand{
+    display: none;    
   }
 `
 
@@ -37,6 +60,22 @@ const card = css`
   background-clip: border-box;
   border: 1px solid rgba(0,0,0,.125);
   border-radius: .25rem;
+`
+
+const cardList = css`
+  box-shadow: 0 1px 4px rgba(0,0,0, .1);
+  margin-bottom: 30px;
+  border:0px;
+  h3{
+    font-weight: bold;
+    font-family: "Roboto-Bold";
+  }
+  span{
+    color: #ffb24c;
+    font-family: "Roboto-Bold";
+  }
+  &:last-child{
+  }
 `
 
 const cardBody = css`
@@ -169,6 +208,26 @@ const flexRow = css`
 
 const border0 = css`
   border: 0px !important;
+`
+
+const borderWhite = css`
+  border: 1px solid #fff !important;
+`
+
+const borderTopWhite = css`
+  border-top: 1px solid #fff !important;
+`
+
+const borderBottomWhite = css`
+  border-bottom: 1px solid #fff !important;
+`
+
+const borderLeftWhite = css`
+  border-left: 1px solid #fff !important;
+`
+
+const borderRightWhite = css`
+  border-right: 1px solid #fff !important;
 `
 
 const ulUnstyled = css`
@@ -615,6 +674,10 @@ const padding5 = css`
 `
 
 // text
+const textDark = css`
+  color: #000 !important;
+`
+
 const textRead = css`
   color: rgba(0,0,0,.38)!important;
 `
@@ -735,6 +798,12 @@ const btnClose = css`
 `
 
 // pure functions
+function boxShadow(shadow){
+  return css`
+    box-shadow: ${shadow};
+  `
+}
+
 function input(type) {
   let inputStyle
   if (type === 'textarea') {
@@ -753,10 +822,24 @@ function input(type) {
 }
 
 // background color
-function backgroundColor(data) {
+function borderRadius(x, y, value){
+  return `
+    border-${x}-${y}-radius: ${value};  
+  `
+}
+
+function backgroundColor(color) {
   return css`
-    background-color: ${data.color};
-    height:  ${data.height}px;
+    background-color: ${color};
+  `
+}
+
+function color(color) {
+  return css`
+    &::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+      color: #fff;
+    }
+    color: ${color};
   `
 }
 
@@ -1057,6 +1140,167 @@ const mansoryItem = css`
 `
 
 // custom css
+const listInline = css`
+  padding-left: 0;
+  list-style: none;
+  color: #73a8de;
+  li{
+    display: inline-block;
+    margin-right:10px;
+    &:last-child{
+      margin-right: 0px;
+    }
+  }
+`
+
+const textElepsis3 = css`
+  overflow: hidden !important;
+  display: -webkit-box !important;
+  -webkit-box-orient: vertical !important;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 3 !important;
+`
+
+const optionSelectedWrapper = css`
+  background: #fff;
+  top: 50%;
+  left 0px;
+  padding-left: 10px;
+  padding-right: 10px;
+  position:absolute;
+  margin-top: -13px;
+  overflow-x: auto;
+  height: 26px;
+  overflow-y: hidden;
+  white-space: nowrap;
+  width:100%;
+`
+
+const optionSelected = css`
+  background: #019688;
+  padding: 6px 12px;
+  position: relative;
+  color: #fff;
+  font-size: 12px;
+  border-radius: 5px;
+  box-shadow: 0 1px 4px rgba(0,0,0, .1);
+  z-index: 111;
+  display: inline-block;
+  margin-right: 10px;
+  &:last-child{
+    margin-right: 0px;
+  }
+`
+
+const optionItem = css`
+  padding: 0.85rem 1rem !important;
+`
+
+const wrapperCheckBox = css`
+  width:100%;
+  display:inline-block;
+  position:relative;
+`
+
+const formControlCheckbox = css`
+  width: 100%;
+`
+
+const styledCheckbox = css`
+  margin:0px;
+  position: absolute;
+  opacity: 0;
+  & + label {
+    position: relative;
+    cursor: pointer;
+    padding: 0;
+    width:100%;
+    display:block;
+  }
+  & + label:after {
+    content: '';
+    margin-left: 15px;
+    display: inline-block;
+    vertical-align:text-top;
+    height: 18px;
+    width: 18px;
+    background: white;
+    border:1px solid #000;
+    border-radius: 3px;
+    right:0px;
+    position:absolute;
+  }
+  &:hover + label:after {
+    background:#019688 !important;
+    border:1px solid #019688 !important;
+  }
+  &:focus + label:after {
+    box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.12);
+  }
+  &:checked + label:after {
+    background: #019688 !important;
+    border:1px solid #019688 !important;
+  }
+
+  &:disabled + label {
+    color: #fff;
+    cursor: auto;
+    font-size:14px;
+  }
+
+&:disabled + label:after {
+  box-shadow: none;
+  background: #fff;
+}
+&:checked + label:before {
+  content: '';
+  position: absolute;
+  right: 12px;
+  top: 8px;
+  background: #fff;
+  width: 2px;
+  height: 2px;
+  box-shadow: 
+    2px 0 0 white,
+    4px 0 0 white,
+    4px -2px 0 white,
+    4px -4px 0 white,
+    4px -6px 0 white,
+    4px -8px 0 white;
+  transform: rotate(45deg);
+  z-index:111;
+}
+`
+
+const wrapperChild = css`
+  display:block !important;
+  width:100%;
+`
+
+const optionList = css`
+  background: #fff;
+  width:100%;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  color: #000;
+  display: block;
+  height:200px;
+  overflow-y:scroll;
+`
+
+const optionListWrapper = css`
+  box-shadow: 0 1px 4px rgba(0,0,0, .1);
+  position: absolute;
+  width:100%;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+`
+const headerFilter = css`
+  background-color: #106cc8;
+  color: #fff;
+  padding: 2rem!important;
+  z-index:111;
+`
 const imgCover = css`
   object-fit: cover;
   object-position: center;
@@ -1185,8 +1429,10 @@ const customPosition = css`
 export default {
   // base
   formControl,
+  customSelect,
   formControlTextarea,
   card,
+  cardList,
   cardBody,
   navbar,
   navbarMenu,
@@ -1198,6 +1444,11 @@ export default {
 
   // border
   border0,
+  borderBottomWhite,
+  borderTopWhite,
+  borderLeftWhite,
+  borderRightWhite,
+  borderWhite,
 
   // list
   ulUnstyled,
@@ -1297,6 +1548,7 @@ export default {
   padding5,
 
   // text
+  textDark,
   textRead,
   textWhite,
   textMuted,
@@ -1317,11 +1569,14 @@ export default {
   btnClose,
 
   // function,
+  boxShadow,
   input,
   backgroundColor,
+  color,
   play,
   indicator,
   formControlRadio,
+  borderRadius,
 
   // image
   imgFluid,
@@ -1331,6 +1586,18 @@ export default {
   mansoryItem,
 
   // custom css
+  listInline,
+  textElepsis3,
+  optionSelectedWrapper,
+  optionSelected,
+  optionItem,
+  wrapperChild,
+  styledCheckbox,
+  wrapperCheckBox,
+  formControlCheckbox,
+  optionListWrapper,
+  optionList,
+  headerFilter,
   imgCover,
   mansoryItemChild,
   positionRelative,
